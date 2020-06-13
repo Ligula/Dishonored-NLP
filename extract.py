@@ -20,6 +20,9 @@ def get_audiographs():
     # Extract audiograph data, including location
     for directory in directories:
         print("\n\n", directory)
+        n = directory.split("/")
+        name = n[2]
+
         html = urlopen(root+directory)
         soup = BeautifulSoup(html, 'lxml')
 
@@ -29,7 +32,12 @@ def get_audiographs():
             # paragraphs = transcript.find_all_next()
             for elem in transcript.next_siblings:
                 if elem.name == "p":
-                    print(elem)
+                    
+                    # i_tag = elem.i.extract()
+                    # transcript_data = i_tag.string.extract()
+                    print(elem.text)
+                    with open(name + ".txt", "a+") as audiog_file:
+                        audiog_file.write(elem.text)
                 if elem.name == "h2":
                     break
                     #Get next element and extract location 
