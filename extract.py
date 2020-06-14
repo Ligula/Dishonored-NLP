@@ -1,27 +1,27 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+import os 
 
 root = "https://dishonored.fandom.com"
 
 def get_audiographs():
+    
     url = root + "/wiki/Category:Dishonored_2_Audiographs"
     html = urlopen(url) 
     soup = BeautifulSoup(html, 'lxml')
 
     # Extract directories of audiographs
     directories = []
-    audiographs = soup.find_all("div", {"class": "category-page__member-left"})
-    for audiograph in audiographs:
-        links = audiograph.find_all("a")
-        for link in links:
-            if ".ogg" not in link['href']:
-                directories.append(link['href'])
-    
+ 
+    for li in soup.find_all("li", {"class" : "category-page__member"}):
+        if ".ogg" not in li.a['href']:
+            directories.append(li.a['href'])
+
     # Extract audiograph data, including location
+    print(directories)
     for directory in directories:
         print("\n\n", directory)
-        n = directory.split("/")
-        name = n[2]
+        name = directory.split("/")[2]
 
         html = urlopen(root+directory)
         soup = BeautifulSoup(html, 'lxml')
@@ -29,18 +29,30 @@ def get_audiographs():
         transcript = soup.find("h2", string = "Transcript")
         
         try:
-            # paragraphs = transcript.find_all_next()
+            data = ""
             for elem in transcript.next_siblings:
                 if elem.name == "p":
-                    
-                    # i_tag = elem.i.extract()
-                    # transcript_data = i_tag.string.extract()
-                    print(elem.text)
-                    with open(name + ".txt", "a+") as audiog_file:
-                        audiog_file.write(elem.text)
+                    data += elem.text
+
+                # Need to fix location scrape
                 if elem.name == "h2":
+                    location_data = elem.next_sibling.next_sibling.text
+                    location_dirty = location_data.split("mission")
+
+                    location_clean = location_dirty[-1].translate(str.maketrans({" ":"_", ".":""}))
+                    location_clean = location_clean[1:].strip()
+                    print(location_clean)
+    
+                    if not os.path.exists(os.getcwd()+"\data\missions/" + location_clean):
+                        os.makedirs(os.getcwd()+"\data\missions/" + location_clean)
+                        
+                        print("sicc")
+
                     break
-                    #Get next element and extract location 
+            
+            with open(os.getcwd()+"\data\missions/" + location_clean + "/" + name + ".txt", "a+") as audiog_file:
+                audiog_file.write(data)
+
         except:
             print("N/A")
         
