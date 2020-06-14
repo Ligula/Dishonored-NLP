@@ -31,26 +31,28 @@ def get_audiographs():
         try:
             data = ""
             for elem in transcript.next_siblings:
+
+                # Transcript Data 
                 if elem.name == "p":
                     data += elem.text
 
-                # Need to fix location scrape
+                # Location Data 
                 if elem.name == "h2":
-                    location_data = elem.next_sibling.next_sibling.text
-                    location_dirty = location_data.split("mission")
+                    location_dirty = elem.next_sibling.next_sibling.text
+                    location_clean = location_dirty.split("mission")[1].split(".")[0].split(",")[0].strip()
 
-                    location_clean = location_dirty[-1].translate(str.maketrans({" ":"_", ".":""}))
-                    location_clean = location_clean[1:].strip()
-                    print(location_clean)
+                    # Fixes entry for audiograph found in both Dishonored 1 & 2
+                    if location_clean == "Return to the Tower":
+                        location_clean = "A Long Day in Dunwall"
+
+                    location_clean_dir = location_clean.translate(str.maketrans({" ":"_", ".":""}))
     
-                    if not os.path.exists(os.getcwd()+"\data\missions/" + location_clean):
-                        os.makedirs(os.getcwd()+"\data\missions/" + location_clean)
-                        
-                        print("sicc")
+                    if not os.path.exists(os.getcwd()+"/data/missions/" + location_clean_dir):
+                        os.makedirs(os.getcwd()+"/data/missions/" + location_clean_dir + "/audiographs")
 
                     break
             
-            with open(os.getcwd()+"\data\missions/" + location_clean + "/" + name + ".txt", "a+") as audiog_file:
+            with open(os.getcwd()+"/data/missions/" + location_clean_dir + "/audiographs/" + name + ".txt", "a+") as audiog_file:
                 audiog_file.write(data)
 
         except:
