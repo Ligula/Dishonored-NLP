@@ -4,9 +4,9 @@ import os
 
 root = "https://dishonored.fandom.com"
 
-def get_audiographs():
+def get_data(url_subdirectory, data_type, filter):
     
-    url = root + "/wiki/Category:Dishonored_2_Audiographs"
+    url = root + url_subdirectory
     html = urlopen(url) 
     soup = BeautifulSoup(html, 'lxml')
 
@@ -46,18 +46,28 @@ def get_audiographs():
                         location_clean = "A Long Day in Dunwall"
 
                     location_clean_dir = location_clean.translate(str.maketrans({" ":"_", ".":""}))
-    
+
+                    # Creates mission directories
                     if not os.path.exists(os.getcwd()+"/data/missions/" + location_clean_dir):
                         os.makedirs(os.getcwd()+"/data/missions/" + location_clean_dir + "/audiographs")
+                        os.makedirs(os.getcwd()+"/data/missions/" + location_clean_dir + "/books") 
+                        os.makedirs(os.getcwd()+"/data/missions/" + location_clean_dir + "/notes")  
 
                     break
             
-            with open(os.getcwd()+"/data/missions/" + location_clean_dir + "/audiographs/" + name + ".txt", "a+") as audiog_file:
-                audiog_file.write(data)
+            # Filters data to the mission in which it is located
+            if filter == True:
+                with open(os.getcwd()+"/data/missions/" + location_clean_dir + "/" + data_type + "/" + name + ".txt", "a+") as file:
+                    file.write(data)
+            else:
+                with open(os.getcwd()+"/data/" + data_type + "/" + name + ".txt", "a+") as file:
+                    file.write(data)
 
         except:
             print("N/A")
         
 
-get_audiographs()
+# get_data("/wiki/Category:Dishonored_2_Audiographs", "audiograph", True)
+get_data("/wiki/Category:Dishonored_2_Books", "books", True)
+
 
