@@ -4,4 +4,4 @@ Dishonored 2 boasts an extensive fictional world brimming with lore. It's steamp
 This project aims to extract all collectable lore texts to be processed with NLP techniques. Visualisations will present information which players may have overlooked alongside general statistics on recurring characters and events and their correlations to one another.
 
 ## Data sources
-* [Fandom.com](https://dishonored.fandom.com/wiki/Dishonored_2) 
+* [Fandom.com](https://dishonored.fandom.com/wiki/Dishonored_2) - Notes, audiograph and book transcripts
